@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blessmate", "Blessmate\Blessmate.csproj", "{4AC31976-9CA7-44C2-86F3-57D0E4040339}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blessmate.tests", "Blessmate.tests\Blessmate.tests.csproj", "{AFF27FA0-4BE9-4BA5-B135-F59285BB1ED4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AC31976-9CA7-44C2-86F3-57D0E4040339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AC31976-9CA7-44C2-86F3-57D0E4040339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AC31976-9CA7-44C2-86F3-57D0E4040339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AC31976-9CA7-44C2-86F3-57D0E4040339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFF27FA0-4BE9-4BA5-B135-F59285BB1ED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFF27FA0-4BE9-4BA5-B135-F59285BB1ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFF27FA0-4BE9-4BA5-B135-F59285BB1ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFF27FA0-4BE9-4BA5-B135-F59285BB1ED4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
