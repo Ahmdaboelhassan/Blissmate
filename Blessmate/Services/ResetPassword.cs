@@ -8,8 +8,8 @@ namespace Blessmate.Services.IServices
 {
     public class ResetPassword : IResetPassword
     {
-        private readonly UserManager<Therpist> _userManager;
-        public ResetPassword(UserManager<Therpist> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ResetPassword(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }

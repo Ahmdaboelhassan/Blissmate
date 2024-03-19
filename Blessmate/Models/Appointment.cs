@@ -6,16 +6,19 @@ namespace Blessmate.Models
     public class Appointment
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         [Required]
-        public string PatientId {get; set;}
+        public int PatientId {get; set;}
         [Required]
         public int TherpistId {get; set;}
         [Required]
-        public DateTime InTime {get;set;}
+        public DateTime Time {get;set;}
 
         [ForeignKey(nameof(TherpistId))]
-        public Therpist Therpist {get; set;}
+        public Therapist Therapist {get; set;}
+
+        [ForeignKey(nameof(PatientId))]
+        public Patient Patient {get; set;}
 
     }
 }

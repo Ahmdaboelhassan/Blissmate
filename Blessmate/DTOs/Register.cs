@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Blessmate.Records
+namespace Blessmate.DTOs
 {
     public class Register
     {
@@ -15,17 +15,6 @@ namespace Blessmate.Records
 
         [Required,DataType(DataType.Password)]
         public string Password { get; set; }
-
-        [Required]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        public string ClinicAddress { get; set; }
-
-        [Required]
-        public string ClinicNumber { get; set; }
-        
         public bool IsMale { get; set; } = true;
     }
 }
-

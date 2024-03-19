@@ -1,4 +1,5 @@
 using AutoMapper;
+using Blessmate.DTOs;
 using Blessmate.Models;
 using Blessmate.Records;
 
@@ -8,7 +9,8 @@ namespace Blessmate.Helpers
     {
        public AutoMapperProfile()
        {
-            CreateMap<Register,Therpist>();
+            CreateMap<Register,Patient>();
+            CreateMap<TherapistRegister,Therapist>();
        }
     }
 }

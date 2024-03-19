@@ -10,8 +10,8 @@ namespace Blessmate.Services
 {
     public class EmailConfirmation : IEmailConfirmation
     {
-        private readonly UserManager<Therpist> _userManger;
-        public EmailConfirmation(UserManager<Therpist> userManager)
+        private readonly UserManager<ApplicationUser> _userManger;
+        public EmailConfirmation(UserManager<ApplicationUser> userManager)
         {
             _userManger = userManager;
         }

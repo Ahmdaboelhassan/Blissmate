@@ -10,15 +10,20 @@ namespace Blessmate.Services;
 public class TherapistsService : ITherapistsService
 {
     private readonly AppDbContext _db;
-    public TherapistsService(AppDbContext db) => _db = db;
+    private readonly UserManager<ApplicationUser> _userManager;
+    public TherapistsService(AppDbContext db , UserManager<ApplicationUser> userManager) {
+        _userManager = userManager;
+        _db = db;
+    }
 
     public async Task<IEnumerable<AuthResponse>> GetTherpists()
-    {   var therpists = _db.Users.Select(th => new AuthResponse {
+    {  
+           var therpists =  _userManager.Users.Select(th => new AuthResponse {
+
             id = th.Id,
             email = th.Email,
             firstname = th.FirstName,
             lastname = th.LastName,
-            isConfirmed = th.IsConfirmed,
             isAuth = true
          }) ;
 

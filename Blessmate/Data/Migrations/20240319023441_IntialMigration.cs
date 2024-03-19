@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Blessmate.Migrations
+namespace Blessmate.Data.Migrations
 {
     /// <inheritdoc />
     public partial class IntialMigration : Migration
@@ -34,15 +34,8 @@ namespace Blessmate.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    ClinicAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    ClinicNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    TherpistIdentity = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Speciality = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    YearsExperience = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsMale = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -80,27 +73,6 @@ namespace Blessmate.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Appointments",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PatientId = table.Column<string>(type: "TEXT", nullable: false),
-                    TherpistId = table.Column<int>(type: "INTEGER", nullable: false),
-                    InTime = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appointments", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Appointments_AspNetUsers_TherpistId",
-                        column: x => x.TherpistId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -190,6 +162,81 @@ namespace Blessmate.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Patients_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Therapists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ClinicAddress = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    ClinicNumber = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    TherpistIdentity = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Speciality = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    YearsExperience = table.Column<byte>(type: "INTEGER", nullable: true),
+                    IdentityConfirmed = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Therapists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Therapists_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appointments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PatientId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TherpistId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Time = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appointments_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appointments_Therapists_TherpistId",
+                        column: x => x.TherpistId,
+                        principalTable: "Therapists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_PatientId",
+                table: "Appointments",
+                column: "PatientId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_TherpistId",
                 table: "Appointments",
@@ -253,6 +300,12 @@ namespace Blessmate.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Patients");
+
+            migrationBuilder.DropTable(
+                name: "Therapists");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

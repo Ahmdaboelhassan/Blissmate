@@ -15,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 string? ConnectionString = builder.Configuration.GetConnectionString("Defualt");
 builder.Services.AddDbContext<AppDbContext>(app => app.UseSqlite(ConnectionString));
 
-builder.Services.AddIdentity<Therpist,IdentityRole<int>>()
+builder.Services.AddIdentity<ApplicationUser,IdentityRole<int>>()
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
@@ -35,6 +35,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
 if (app.Environment.IsProduction())
     InitDatabase();
 
@@ -42,8 +43,15 @@ app.Run();
 
 
 
-void InitDatabase(){
+ void InitDatabase(){
     using var scope = app.Services.CreateScope();
     var dbIntializer = scope.ServiceProvider.GetRequiredService<IDbIntializer>();
     dbIntializer.Init();
+}
+
+void SeedFakeData(){
+    using var scope = app.Services.CreateScope();
+    var seedFakeData = new SeedFakeData(scope.ServiceProvider
+            .GetRequiredService<UserManager<ApplicationUser>>());
+    seedFakeData.Seed();
 }

@@ -1,5 +1,7 @@
 using System.Text;
 using AutoMapper;
+using Blessmate.DTOs;
+using Blessmate.Helpers;
 using Blessmate.Models;
 using Blessmate.Records;
 using Blessmate.Services.IServices;
@@ -10,8 +12,8 @@ namespace Blessmate.Services;
 public class AuthService  : IAuthService
 {
     private readonly IMapper _mapper;
-    private readonly UserManager<Therpist> _userManager;
-    public AuthService(IMapper mapper , UserManager<Therpist> userManager)
+    private readonly UserManager<ApplicationUser> _userManager;
+    public AuthService(IMapper mapper , UserManager<ApplicationUser> userManager)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -21,8 +23,37 @@ public class AuthService  : IAuthService
         var userExists = await _userManager.FindByEmailAsync(model.Email);
         if(userExists is not null)
             return new AuthResponse {messages = "Email Is Exist Try Another One"};
-            
-        var therapist = _mapper.Map<Therpist>(model);
+
+        var patient = _mapper.Map<Patient>(model);
+        patient.UserName = model.Email;
+        
+        var result = await _userManager.CreateAsync(patient,model.Password);
+
+        if(!result.Succeeded){
+            var messagesBuilder = new StringBuilder();
+            foreach (var err in result.Errors){
+                messagesBuilder.Append(err.Description);
+            }
+            return new AuthResponse {messages = messagesBuilder.ToString()};
+        }
+        
+        return new AuthResponse{
+            id = patient.Id,
+            email = patient.Email,
+            firstname = patient.FirstName,
+            lastname = patient.LastName,
+            isAuth =  true,
+            isEmailConfirmed = patient.EmailConfirmed,
+            messages = "Patient Registered Successfully",
+        };
+    }
+    public async Task<AuthResponse> RegisterAsync(TherapistRegister model)
+    { 
+        var userExists = await _userManager.FindByEmailAsync(model.Email);
+        if(userExists is not null)
+            return new AuthResponse {messages = "Email Is Exist Try Another One"};
+
+        var therapist = _mapper.Map<Therapist>(model);
         therapist.UserName = model.Email;
         
         var result = await _userManager.CreateAsync(therapist,model.Password);
@@ -41,7 +72,6 @@ public class AuthService  : IAuthService
             firstname = therapist.FirstName,
             lastname = therapist.LastName,
             isAuth =  true,
-            isConfirmed = therapist.IsConfirmed,
             isEmailConfirmed = therapist.EmailConfirmed,
             messages = "Therapist Registered Successfully",
         };
@@ -50,11 +80,11 @@ public class AuthService  : IAuthService
     {
         var therapist = await _userManager.FindByEmailAsync(model.Email);
         if(therapist is null)
-            return new AuthResponse {messages = "Email Is Incorrect !"};
+            return new AuthResponse {messages = "Email or password Is Incorrect !"};
             
         var correctPassword = await _userManager.CheckPasswordAsync(therapist,model.Password);
         if(!correctPassword)        
-            return new AuthResponse {messages = "Password Is Incorrect !"};
+            return new AuthResponse {messages = "Email or password Is Incorrect !"};
         
         return new AuthResponse {
             id = therapist.Id,
@@ -62,7 +92,6 @@ public class AuthService  : IAuthService
             firstname = therapist.FirstName,
             lastname = therapist.LastName,
             isAuth =  true,
-            isConfirmed = therapist.IsConfirmed,
             isEmailConfirmed = therapist.EmailConfirmed,
             messages = "Therapist Login Successfully"
         };

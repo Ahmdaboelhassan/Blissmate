@@ -1,4 +1,5 @@
 using AutoMapper;
+using Blessmate.DTOs;
 using Blessmate.Models;
 using Blessmate.Records;
 using Blessmate.Services;
@@ -11,12 +12,12 @@ namespace Blessmate.tests;
 public class AuthServiceTests
     {
       private readonly IMapper _mapper;
-      private readonly UserManager<Therpist> _userManager;
+      private readonly UserManager<ApplicationUser> _userManager;
 
       public AuthServiceTests()
       {
         _mapper = A.Fake<IMapper>();
-        _userManager = A.Fake<UserManager<Therpist>>();
+        _userManager = A.Fake<UserManager<ApplicationUser>>();
       }
       
       [Fact]
@@ -25,12 +26,12 @@ public class AuthServiceTests
        
         // Arrange
          var register = A.Fake<Register>();
-         var therapist = A.Fake<Therpist>();
+         var therapist = A.Fake<ApplicationUser>();
          var sut = new AuthService(_mapper,_userManager);
 
 
         A.CallTo(() => _userManager.FindByEmailAsync(A<string>.Ignored))
-         .Returns(Task.FromResult<Therpist?>(therapist));
+         .Returns(Task.FromResult<ApplicationUser?>(therapist));
         // Act
         var result = sut.RegisterAsync(register).GetAwaiter().GetResult();
 
@@ -43,12 +44,12 @@ public class AuthServiceTests
     {
         // Arrange
 
-        var therapst = A.Fake<Therpist>();
+        var therapst = A.Fake<ApplicationUser>();
         var register = A.Fake<Register>();
         var falseIdentityResult = A.Fake<IdentityResult>();
         var sut = new AuthService(_mapper, _userManager);
 
-        A.CallTo(() => _userManager.CreateAsync(A<Therpist>.Ignored,A<string>.Ignored))
+        A.CallTo(() => _userManager.CreateAsync(A<ApplicationUser>.Ignored,A<string>.Ignored))
                 .Returns(Task.FromResult<IdentityResult>(falseIdentityResult));
        
         // Act
@@ -62,15 +63,15 @@ public class AuthServiceTests
     public void RegisterAsync_CreateUserSuccess_RetrunAuthResonseWithIsAuthEqualTrue()
     {
         // Arrange
-        var therapst = A.Fake<Therpist>();
+        var therapst = A.Fake<ApplicationUser>();
         var register = A.Fake<Register>();
         var trueIdentityResult = new TrueIdentityResult();
         var sut = new AuthService(_mapper, _userManager);
 
         A.CallTo(() => _userManager.FindByEmailAsync(A<string>.Ignored))
-               .Returns(Task.FromResult<Therpist?>(null));
+               .Returns(Task.FromResult<ApplicationUser?>(null));
 
-        A.CallTo(() => _userManager.CreateAsync(A<Therpist>.Ignored, A<string>.Ignored))
+        A.CallTo(() => _userManager.CreateAsync(A<ApplicationUser>.Ignored, A<string>.Ignored))
                 .Returns(Task.FromResult<IdentityResult>(trueIdentityResult));
         
         // Act
