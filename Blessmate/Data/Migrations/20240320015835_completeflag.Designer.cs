@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blessmate.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240319023441_IntialMigration")]
-    partial class IntialMigration
+    [Migration("20240320015835_completeflag")]
+    partial class completeflag
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,12 @@ namespace Blessmate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("HasAccepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("PatientId")
@@ -286,9 +292,6 @@ namespace Blessmate.Data.Migrations
                     b.Property<string>("TherpistIdentity")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
-
-                    b.Property<byte?>("YearsExperience")
-                        .HasColumnType("INTEGER");
 
                     b.ToTable("Therapists", (string)null);
                 });

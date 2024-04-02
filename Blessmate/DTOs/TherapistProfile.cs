@@ -1,9 +1,12 @@
-namespace Blessmate.Records;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Blessmate;
 
 public class TherapistProfile
 {
-    public string? PhotoUrl { get; set; }
-    public string? Description { get; set; }
-    public string? Specialty { get; set; }
-    public IEnumerable<DateTime>? AvailbleAppointmnet { get; set; }
+    [Required]
+    public string? Decreption { get; set; }
+    [Required]
+    public string? Speciality { get; set; }
+    public IFormFile? ProfilePicture { get; set; }
 }

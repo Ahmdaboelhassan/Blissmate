@@ -7,18 +7,18 @@ namespace Blessmate.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public int PatientId {get; set;}
+        public int? PatientId {get; set;}
         [Required]
         public int TherpistId {get; set;}
         [Required]
-        public DateTime Time {get;set;}
+        public DateTime InTime {get;set;}
+        public bool IsCompleted { get; set; }
 
         [ForeignKey(nameof(TherpistId))]
         public Therapist Therapist {get; set;}
 
         [ForeignKey(nameof(PatientId))]
-        public Patient Patient {get; set;}
+        public Patient? Patient {get; set;}
 
     }
 }

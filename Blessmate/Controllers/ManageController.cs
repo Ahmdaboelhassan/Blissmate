@@ -1,3 +1,4 @@
+using Blessmate.DTOs;
 using Blessmate.Helpers;
 using Blessmate.Records;
 using Blessmate.Services.IServices;
@@ -76,7 +77,21 @@ namespace Blessmate.Controllers
             return Ok(response);
             
         }
+        
+        [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<ActionResult> ResetPassword([FromBody] ChanagePasswordModel model){
+            
+            if(!ModelState.IsValid)
+                return BadRequest("Please Check keys Value");
+            
+            var response = await _resetPassword.ChangePassword(model);
 
+            if (!response.IsCompleted) return BadRequest(response.Message);
+                
+            return Ok(response);
+            
+        }
         private string HostUrl(HttpRequest req){
             
             string Https = req.IsHttps?  "Https://" : "Http://";

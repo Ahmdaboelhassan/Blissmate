@@ -1,4 +1,5 @@
 using System.Text;
+using Blessmate.DTOs;
 using Blessmate.Models;
 using Blessmate.Records;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,20 @@ namespace Blessmate.Services.IServices
         {
             _userManager = userManager;
         }
+
+        public async Task<ManageResponse> ChangePassword(ChanagePasswordModel model)
+        { var user = await _userManager.FindByIdAsync(model.id.ToString());
+
+           if (user is null)
+                 return new ManageResponse("User is not exists");
+
+          var result =  await _userManager.ChangePasswordAsync(user,model.oldPassword,model.newPassword);
+          if (!result.Succeeded)
+                 return new ManageResponse("Something went wrong");
+
+          return new ManageResponse("Changed Successfully", true);
+        }
+
         public async Task<ManageResponse> GetPasswordResetToken(int id)
         {
            var user = await _userManager.FindByIdAsync(id.ToString());

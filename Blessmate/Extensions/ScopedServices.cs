@@ -10,10 +10,14 @@ public static class ScopedServices
 
         services.AddScoped<IAuthService,AuthService>();
         services.AddScoped<IEmailConfirmation,EmailConfirmation>();
+        services.AddScoped<IMessageService,MessageService>();
         services.AddScoped<IResetPassword,ResetPassword>();
         services.AddScoped<IEmailSender,EmailSender>();
         services.AddScoped<ITherapistsService,TherapistsService>();
+        services.AddScoped<IPhotoService,PhotoService>();
         services.AddScoped<IDbIntializer,DbIntializer>();
+        services.AddScoped<IPatientService,PatientService>();
+        services.AddScoped<IDashbourdService,DashbourdService>();
     }
 
 }

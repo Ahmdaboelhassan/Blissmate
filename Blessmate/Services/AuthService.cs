@@ -1,11 +1,16 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Blessmate.DTOs;
+using Blessmate.Factory;
 using Blessmate.Helpers;
 using Blessmate.Models;
 using Blessmate.Records;
 using Blessmate.Services.IServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Blessmate.Services;
 
@@ -13,8 +18,10 @@ public class AuthService  : IAuthService
 {
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
-    public AuthService(IMapper mapper , UserManager<ApplicationUser> userManager)
+    private readonly JWTSettings _jwtSettings ;
+    public AuthService(IMapper mapper , UserManager<ApplicationUser> userManager , IOptions<JWTSettings> jwtSettings)
     {
+        _jwtSettings = jwtSettings.Value;
         _mapper = mapper;
         _userManager = userManager;
     }
@@ -36,16 +43,10 @@ public class AuthService  : IAuthService
             }
             return new AuthResponse {messages = messagesBuilder.ToString()};
         }
+
+        var token = await GenerateToken(patient);
         
-        return new AuthResponse{
-            id = patient.Id,
-            email = patient.Email,
-            firstname = patient.FirstName,
-            lastname = patient.LastName,
-            isAuth =  true,
-            isEmailConfirmed = patient.EmailConfirmed,
-            messages = "Patient Registered Successfully",
-        };
+        return AuthResponseFactory.SuccessAuthResponse(patient, token);
     }
     public async Task<AuthResponse> RegisterAsync(TherapistRegister model)
     { 
@@ -66,35 +67,50 @@ public class AuthService  : IAuthService
             return new AuthResponse {messages = messagesBuilder.ToString()};
         }
         
-        return new AuthResponse{
-            id = therapist.Id,
-            email = therapist.Email,
-            firstname = therapist.FirstName,
-            lastname = therapist.LastName,
-            isAuth =  true,
-            isEmailConfirmed = therapist.EmailConfirmed,
-            messages = "Therapist Registered Successfully",
-        };
+        var token = await GenerateToken(therapist);
+
+        return AuthResponseFactory.SuccessAuthResponse(therapist, token);
     }
     public async Task<AuthResponse> LoginAsync(Login model)
     {
-        var therapist = await _userManager.FindByEmailAsync(model.Email);
-        if(therapist is null)
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if(user is null)
             return new AuthResponse {messages = "Email or password Is Incorrect !"};
             
-        var correctPassword = await _userManager.CheckPasswordAsync(therapist,model.Password);
+        var correctPassword = await _userManager.CheckPasswordAsync(user,model.Password);
         if(!correctPassword)        
             return new AuthResponse {messages = "Email or password Is Incorrect !"};
         
-        return new AuthResponse {
-            id = therapist.Id,
-            email = therapist.Email,
-            firstname = therapist.FirstName,
-            lastname = therapist.LastName,
-            isAuth =  true,
-            isEmailConfirmed = therapist.EmailConfirmed,
-            messages = "Therapist Login Successfully"
-        };
+        var token = await GenerateToken(user);
+
+        return AuthResponseFactory.SuccessAuthResponse(user, token);
     }
+
+    public async Task<(string key , DateTime expireOn)>  GenerateToken(ApplicationUser user){
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        
+        var Claims = new []{
+            new Claim(JwtRegisteredClaimNames.NameId , user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Iss , Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Email , user.Email),
+        }.
+        Union(userClaims);
+
+        var symmetricSecureKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.JWTKey));
+        var cred = new SigningCredentials(symmetricSecureKey,SecurityAlgorithms.HmacSha256);
+
+        var tokenInfo = new JwtSecurityToken(
+          issuer : _jwtSettings.Issuer,
+          audience : _jwtSettings.Audience,
+          expires : DateTime.Now.AddDays(_jwtSettings.DurationInDays),
+          claims : Claims,
+          signingCredentials : cred
+        );
+
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenInfo);
+        
+        return (token , tokenInfo.ValidTo);
+    }
+
 
 }

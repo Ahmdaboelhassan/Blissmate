@@ -24,10 +24,10 @@ namespace Blessmate.Helpers
             };
 
               List<Therapist> therapist = new (){
-                new Therapist () {UserName="user6", Email = "user6@blessmate.com",PhoneNumber = "55112255",FirstName ="nada",LastName="ashraf",IsMale=false , ClinicAddress = "Mansoura",ClinicNumber ="112255",Description="Awasome doctor"},
-                 new Therapist () {UserName="user4", Email = "user4@blessmate.com",PhoneNumber = "55112255",FirstName ="mahmoud",LastName="hesham",IsMale=true, ClinicAddress = "Damitta",ClinicNumber ="112255",Description="Awasome doctor"},
-                new Therapist () {UserName="user5", Email = "user5@blessmate.com",PhoneNumber = "55112255",FirstName ="isalm",LastName="fathy",IsMale=true, ClinicAddress = "Mansoura",ClinicNumber ="112255",Description="Awasome doctor"},
-                new Therapist () {UserName="user9", Email = "user9@blessmate.com",PhoneNumber = "55112255",FirstName ="mai",LastName="adbelmohsen",IsMale=false, ClinicAddress = "Raselbar",ClinicNumber ="112255",Description="Awasome doctor"},
+                new Therapist () {UserName="user6", Email = "user6@blessmate.com",PhoneNumber = "55112255",FirstName ="nada",LastName="ashraf",IsMale=false , ClinicAddress = "Mansoura",ClinicNumber ="112255",Description="Awasome doctor",IdentityConfirmed = true},
+                 new Therapist () {UserName="user4", Email = "user4@blessmate.com",PhoneNumber = "55112255",FirstName ="mahmoud",LastName="hesham",IsMale=true, ClinicAddress = "Damitta",ClinicNumber ="112255",Description="Awasome doctor",IdentityConfirmed = true},
+                new Therapist () {UserName="user5", Email = "user5@blessmate.com",PhoneNumber = "55112255",FirstName ="isalm",LastName="fathy",IsMale=true, ClinicAddress = "Mansoura",ClinicNumber ="112255",Description="Awasome doctor",IdentityConfirmed = true},
+                new Therapist () {UserName="user9", Email = "user9@blessmate.com",PhoneNumber = "55112255",FirstName ="mai",LastName="adbelmohsen",IsMale=false, ClinicAddress = "Raselbar",ClinicNumber ="112255",Description="Awasome doctor",IdentityConfirmed = true},
             };
 
 

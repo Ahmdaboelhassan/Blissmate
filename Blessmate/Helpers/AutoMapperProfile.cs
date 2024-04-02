@@ -11,6 +11,12 @@ namespace Blessmate.Helpers
        {
             CreateMap<Register,Patient>();
             CreateMap<TherapistRegister,Therapist>();
+            CreateMap<Therapist,TherapistData>();
+            CreateMap<Appointment,AppointmentDto>();
+            CreateMap<Appointment,TherapistData>()
+                .IncludeMembers(src => src.Therapist)
+               .ForMember(dest => dest.Id , opt => opt.MapFrom(src => src.Therapist.Id));
+    
        }
     }
 }

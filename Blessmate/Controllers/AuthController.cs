@@ -23,8 +23,6 @@ public class AuthController : Controller
     [HttpPost]
     [Route("PatientRegister")]
     public async Task<IActionResult> Register( Register model){
-        
-        bool s = ModelState.IsValid;
 
         var response = await _authService.RegisterAsync(model);
         

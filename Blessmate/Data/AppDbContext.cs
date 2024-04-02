@@ -11,8 +11,9 @@ namespace Blessmate.Data
     {
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Therapist> Therapists { get; set; }
-        public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
            
@@ -23,6 +24,15 @@ namespace Blessmate.Data
             base.OnModelCreating(builder); 
             builder.Entity<Patient>(entity => { entity.ToTable("Patients"); });
             builder.Entity<Therapist>(entity => { entity.ToTable("Therapists"); });
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.MessagesSent);
+
+           builder.Entity<Message>()
+                .HasOne(m => m.Reciver)
+                .WithMany(u => u.MessagesRecieved);
+
         }
     }
 }

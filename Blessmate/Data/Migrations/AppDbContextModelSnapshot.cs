@@ -106,14 +106,17 @@ namespace Blessmate.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PatientId")
+                    b.Property<DateTime>("InTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("PatientId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TherpistId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -122,6 +125,33 @@ namespace Blessmate.Data.Migrations
                     b.HasIndex("TherpistId");
 
                     b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("Blessmate.Models.Message", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReciverId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("SendIn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReciverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -261,6 +291,12 @@ namespace Blessmate.Data.Migrations
                 {
                     b.HasBaseType("Blessmate.Models.ApplicationUser");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CertificateUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ClinicAddress")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
@@ -276,6 +312,9 @@ namespace Blessmate.Data.Migrations
                     b.Property<bool>("IdentityConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Price")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Speciality")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
@@ -284,7 +323,7 @@ namespace Blessmate.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<byte?>("YearsExperience")
+                    b.Property<int>("YearsExperience")
                         .HasColumnType("INTEGER");
 
                     b.ToTable("Therapists", (string)null);
@@ -294,9 +333,7 @@ namespace Blessmate.Data.Migrations
                 {
                     b.HasOne("Blessmate.Models.Patient", "Patient")
                         .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PatientId");
 
                     b.HasOne("Blessmate.Models.Therapist", "Therapist")
                         .WithMany()
@@ -307,6 +344,25 @@ namespace Blessmate.Data.Migrations
                     b.Navigation("Patient");
 
                     b.Navigation("Therapist");
+                });
+
+            modelBuilder.Entity("Blessmate.Models.Message", b =>
+                {
+                    b.HasOne("Blessmate.Models.ApplicationUser", "Reciver")
+                        .WithMany("MessagesRecieved")
+                        .HasForeignKey("ReciverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Blessmate.Models.ApplicationUser", "Sender")
+                        .WithMany("MessagesSent")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reciver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -376,6 +432,13 @@ namespace Blessmate.Data.Migrations
                         .HasForeignKey("Blessmate.Models.Therapist", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Blessmate.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("MessagesRecieved");
+
+                    b.Navigation("MessagesSent");
                 });
 #pragma warning restore 612, 618
         }

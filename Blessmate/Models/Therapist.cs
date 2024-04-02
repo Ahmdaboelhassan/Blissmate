@@ -14,8 +14,11 @@ namespace Blessmate.Models
         public string? Description { get; set; }
         [MaxLength(50)]
         public string? Speciality { get; set; }
-        public byte? YearsExperience { get; set; }
+        public string? CertificateUrl { get; set; }
         public bool IdentityConfirmed { get; set; } = false;
+        public int YearsExperience { set; get;} = new Random().Next(5,40);
+        public int Age {set; get;} = new Random().Next(28,80);
+        public int Price {set; get;} = new Random().Next(100,1000);
     }
 
 }
