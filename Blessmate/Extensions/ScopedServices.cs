@@ -17,6 +17,7 @@ public static class ScopedServices
         services.AddScoped<IPhotoService,PhotoService>();
         services.AddScoped<IDbIntializer,DbIntializer>();
         services.AddScoped<IPatientService,PatientService>();
+        services.AddScoped<IPaymentService,PaymentService>();
         services.AddScoped<IDashbourdService,DashbourdService>();
     }
 

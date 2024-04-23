@@ -8,5 +8,6 @@ public class AppointmentDto
         public int? TherpistId {get; set;}
         [Required]
         public string InTime {get;set;}
+        [Required]
         public int? PatientId {get; set;}
 }

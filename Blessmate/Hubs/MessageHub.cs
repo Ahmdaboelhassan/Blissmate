@@ -42,7 +42,7 @@ public class MessageHub : Hub
         var groupName = GetGroupName(msg.SenderId.ToString(), msg.ReciverId.ToString());
 
 
-        await Clients.Group(groupName).SendAsync("  " , msg);
+        await Clients.Group(groupName).SendAsync("MessageSend" , msg);
 
     }
 

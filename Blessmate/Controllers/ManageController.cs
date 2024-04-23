@@ -3,21 +3,24 @@ using Blessmate.Helpers;
 using Blessmate.Records;
 using Blessmate.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Blessmate.Controllers
 {
     [Route("[controller]")]
-    public class ManageController : ControllerBase
+    public class ManageController : Controller
     {
         private readonly IEmailConfirmation _emailConfirmation;
         private readonly IResetPassword _resetPassword;
         private readonly IEmailSender _emailSender;
+        private readonly IPaymentService _paymentService;
         public ManageController(IEmailConfirmation emailConfirmation,
-         IResetPassword resetPassword, IEmailSender emailSender)
+         IResetPassword resetPassword, IEmailSender emailSender , IPaymentService paymentService)
         {
             _emailConfirmation = emailConfirmation;
             _resetPassword = resetPassword;
             _emailSender = emailSender;
+            _paymentService = paymentService;
         }
 
         [HttpGet]
@@ -92,12 +95,49 @@ namespace Blessmate.Controllers
             return Ok(response);
             
         }
+
+        [HttpPost]
+        [Route("CheckOut")]
+        public async Task<ActionResult> CheckOut([FromBody] MakeCheckout dto){
+            
+            var successUrl = HostUrl(Request) + Url.Action(nameof(SuccessCheckOut) , "Manage");
+            var failedCheckOut = HostUrl(Request) + Url.Action(nameof(FailedCheckOut) , "Manage");
+
+            var model = dto with {SuccessUrl = successUrl , CancelUrl = failedCheckOut};
+
+            var paymentUrl = _paymentService.MakeCheckout(model);
+            
+            if (string.IsNullOrEmpty(paymentUrl))
+                return BadRequest();
+
+            return Ok(paymentUrl);
+        }
+
+        [HttpGet]
+        [Route("SuccessCheckOut")]
+        public async Task<ActionResult> SuccessCheckOut(){
+            var template = System.IO.File
+                .ReadAllText($"{Directory.GetCurrentDirectory()}/wwwroot/Html/PaymentConfirmation.html")
+                .Replace("<p>[Text]</p>", "<h3 style=\"color:green\"> Success CheckOut</h3>");
+
+            return Content(template, "text/html" );
+        }
+        [HttpGet]
+        [Route("FailedCheckOut")]
+        public async Task<ActionResult> FailedCheckOut(){
+            var template = System.IO.File
+                .ReadAllText($"{Directory.GetCurrentDirectory()}/wwwroot/Html/PaymentConfirmation.html")
+                .Replace("<p>[Text]</p>", "<h3 style=\"color:red\"> Failed To Make CheckOut</h3>");
+
+            return Content(template , "text/html" );
+        }
         private string HostUrl(HttpRequest req){
             
-            string Https = req.IsHttps?  "Https://" : "Http://";
+            string Https = req.IsHttps?  "https://" : "http://";
 
             return Https + req.Host.Value;
         }
+
 
     }
 }

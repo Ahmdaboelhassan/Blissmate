@@ -19,29 +19,22 @@ public class TherapistsService : ITherapistsService
     }
 
      public async Task<bool> AddTherapistAppointment(AppointmentDto dto)
-     {
-          var therapist = await _db.Therapists.FindAsync(dto.TherpistId);
-          if (therapist is null)
+     {    
+          if(!_db.Therapists.Any(t => t.Id == dto.TherpistId))
                return false;
 
           DateTime inTime;
-          try
-          {
-               inTime = DateTime.Parse(dto.InTime);
-          }
-          catch (Exception)
-          {
+          if(!DateTime.TryParse(dto.InTime, out inTime)){
                return false;
           }
 
           if(inTime < DateTime.UtcNow)
                return false;
           
-          var appointmentAvailble = _db.Appointments
-               .FirstOrDefault(ap => ap.TherpistId == dto.TherpistId && ap.InTime == inTime);
+          var appointmentExists = _db.Appointments
+               .Any(ap => ap.TherpistId == dto.TherpistId && ap.InTime == inTime);
           
-          if(appointmentAvailble is not null)
-               return false;
+          if(appointmentExists)  return false;
 
           var appointment = new Appointment(){
                TherpistId = (int)dto.TherpistId,
@@ -141,41 +134,44 @@ public class TherapistsService : ITherapistsService
 
     public async Task<IEnumerable<PatientData>> GetTherapistPatient(int therapistId)
     {     
-        return await _db.Appointments
-               .Where(ap => ap.TherpistId == therapistId && ap.PatientId != null)
-               .Include(ap => ap.Patient)
-               .OrderByDescending(ap => ap.InTime)
-               .Select(ap => new PatientData{
-                    Id = ap.Patient.Id,
-                    FirstName = ap.Patient.FirstName,
-                    LastName = ap.Patient.LastName,
-                    PhoneNumber = ap.Patient.PhoneNumber,
-                    Email = ap.Patient.Email,
-                    IsMale = ap.Patient.IsMale,
-                    PhotoUrl = ap.Patient.PhotoUrl,                        
-               })
-               .Distinct()
-               .ToListAsync();
+         var patientList =  await _db.Appointments
+                              .Where(ap => ap.TherpistId == therapistId && ap.PatientId != null)
+                              .OrderBy(ap => ap.InTime)
+                              .Include(ap => ap.Patient)
+                              .Select(ap => new PatientData{
+                                   Id = ap.Patient.Id,
+                                   FirstName = ap.Patient.FirstName,
+                                   LastName = ap.Patient.LastName,
+                                   PhoneNumber = ap.Patient.PhoneNumber,
+                                   Email = ap.Patient.Email,
+                                   IsMale = ap.Patient.IsMale,
+                                   PhotoUrl = ap.Patient.PhotoUrl,  
+                                   inTime = ap.InTime                      
+                              })
+                              .ToListAsync();
 
+          return patientList.DistinctBy(p => p.Id);
     }
 
     public async Task<IEnumerable<PatientData>> GetLastTherapistPatient(int therapistId)
     {
-        return await _db.Appointments
-               .Where(ap => ap.TherpistId == therapistId)
-               .Include(ap => ap.Patient)
-               .OrderByDescending(ap => ap.InTime)
-               .Select(ap => new PatientData{
-                    Id = ap.Patient.Id,
-                    FirstName = ap.Patient.FirstName,
-                    LastName = ap.Patient.LastName,
-                    PhoneNumber = ap.Patient.PhoneNumber,
-                    Email = ap.Patient.Email,
-                    IsMale = ap.Patient.IsMale,
-                    PhotoUrl = ap.Patient.PhotoUrl,                        
-               })
-               .Distinct()
-               .Take(3)
-               .ToListAsync();
+          var patientList = await _db.Appointments
+                              .Where(ap => ap.TherpistId == therapistId)
+                              .OrderBy(ap => ap.InTime)
+                              .Include(ap => ap.Patient)
+                              .Select(ap => new PatientData{
+                                   Id = ap.Patient.Id,
+                                   FirstName = ap.Patient.FirstName,
+                                   LastName = ap.Patient.LastName,
+                                   PhoneNumber = ap.Patient.PhoneNumber,
+                                   Email = ap.Patient.Email,
+                                   IsMale = ap.Patient.IsMale,
+                                   PhotoUrl = ap.Patient.PhotoUrl,   
+                                   inTime = ap.InTime                                   
+                              })
+                              .Take(3)
+                              .ToListAsync();
+
+          return patientList.DistinctBy(p => p.Id);
     }
 }

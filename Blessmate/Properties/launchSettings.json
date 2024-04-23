@@ -16,9 +16,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5111",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "EmailSetting:password": "Abo102090abo",
-        "JWT:JWTKey": "5d6FGoy^KmQ4Ck1a5aYF64p2QY9f@HKJ@5&amp;*%T*9yK^D"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "https": {
@@ -28,9 +26,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7256;http://localhost:5111",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "EmailSetting:password": "Abo102090abo",
-        "JWT:JWTKey": "5d6FGoy^KmQ4Ck1a5aYF64p2QY9f@HKJ@5&amp;*%T*9yK^D"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "IIS Express": {
@@ -38,9 +34,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "EmailSetting:password": "Abo102090abo",
-        "JWT:JWTKey": "5d6FGoy^KmQ4Ck1a5aYF64p2QY9f@HKJ@5&amp;*%T*9yK^D"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

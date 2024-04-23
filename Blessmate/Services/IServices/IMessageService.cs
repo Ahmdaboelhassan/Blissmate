@@ -6,7 +6,7 @@ namespace Blessmate.Services.IServices
     {
        Task<MessageDto?> SendMessageAsync(MessageDto msg);
        Task<IEnumerable<MessageDto>> GetChatMessagesAsync(int senderId , int reciverId);
-       Task<IEnumerable<ChatLitsItem>?> GetActiveChats(int id);
+       Task<IEnumerable<ChatLitsItem>> GetActiveChats(int id);
 
     }
 }

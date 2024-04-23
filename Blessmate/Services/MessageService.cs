@@ -40,19 +40,47 @@ namespace Blessmate.Services
                     .Where(msg => 
                         msg.SenderId == senderId && msg.ReciverId == reciverId  ||
                         msg.SenderId == reciverId && msg.ReciverId == senderId )
+                    .OrderBy(m => m.SendIn)
                     .Select( m => new MessageDto{
                         Content = m.Content,
                         SenderId  = m.SenderId,
                         ReciverId = m.ReciverId,
                         SendIn = m.SendIn
                     })
-                    .OrderBy(m => m.SendIn)
                     .ToListAsync();
 
         }
-      
-     
-      public async Task<IEnumerable<ChatLitsItem>?> GetActiveChats(int id){
+     public Task<IEnumerable<ChatLitsItem>> GetActiveChats(int id){
+        if(!_db.Users.Any(u => u.Id == id)) 
+            return Task.FromResult(Enumerable.Empty<ChatLitsItem>());
+        
+        var chats = _db.Messages
+                .Where(m => m.SenderId == id || m.ReciverId == id)
+                .OrderByDescending(m => m.SendIn)
+                .Include(m => m.Reciver)
+                .Include(m => m.Sender)
+                .Select( m => new ChatLitsItem {
+                    Id = m.SenderId == id ? m.ReciverId : m.SenderId ,
+                    FirstName = m.SenderId == id ? m.Reciver.FirstName : m.Sender.FirstName,
+                    LastName = m.SenderId == id ? m.Reciver.LastName : m.Sender.LastName,
+                    PhotoUrl = m.SenderId == id ? m.Reciver.PhotoUrl : m.Sender.PhotoUrl,
+                    LastMessage = m.Content,
+                    SendIn = m.SendIn
+                })
+                .GroupBy(li => li.Id)
+                .Select(m => m.First())
+                .AsEnumerable();    
+
+        if (chats is null)
+            return Task.FromResult(Enumerable.Empty<ChatLitsItem>());
+
+        chats = chats.OrderByDescending(m => m.SendIn);
+
+        return Task.FromResult(chats);               
+     }
+
+    [Obsolete]
+     public async Task<IEnumerable<ChatLitsItem>?> GetActiveChats_OldVersion(int id){
 
         var user = _db.Users.FirstOrDefault(u => u.Id == id);
 
@@ -85,7 +113,8 @@ namespace Blessmate.Services
                     }).AsEnumerable();
                                               
         return recivers.UnionBy(senders, x => x.Id);
-      }
+     }
 
-    }
+    
+}
 }

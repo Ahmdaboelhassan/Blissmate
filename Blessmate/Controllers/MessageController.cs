@@ -33,8 +33,6 @@ namespace Blessmate.Controllers
 
             var activeChats = await _messageService.GetActiveChats(id);
 
-            if(activeChats is null) return BadRequest();
-
             return Ok(activeChats);
 
          }

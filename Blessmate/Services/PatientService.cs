@@ -67,37 +67,29 @@ public class PatientService : IPatientService
     }
     public async Task<bool> MakeAppointment(AppointmentDto dto)
     {
-        if(dto.PatientId is null)
-            return false;
-
         DateTime inTime;
-        try
-        {
-            inTime = DateTime.Parse(dto.InTime);
-        }
-        catch (Exception)
-        {
-            return false ;
-        }
-
-        if(inTime < DateTime.UtcNow) 
+        if(!DateTime.TryParse(dto.InTime , out inTime))  
             return false;
 
-        var therapist = await _db.Therapists.FindAsync(dto.TherpistId);
-        if (therapist is null) 
-          return false;
+        // this line because we use postgress and its not alllowed another format expect utc!
+        inTime =  DateTime.SpecifyKind(inTime , DateTimeKind.Utc);
 
-        var appointment = _db.Appointments.SingleOrDefault(ap => ap.InTime == inTime && ap.TherpistId == dto.TherpistId);
-
-        if(appointment is null)
+        if(inTime < DateTime.UtcNow)
             return false;
 
-        if(appointment.PatientId is not null)
+        if(!_db.Therapists.Any(th => th.Id == dto.TherpistId))
             return false;
-        
-        appointment.PatientId = dto.PatientId;
 
-        _db.Update(appointment);
+       if(_db.Appointments.Any(ap => ap.InTime == inTime && ap.TherpistId == dto.TherpistId))
+            return false;
+
+        var newAppoinment = new Appointment{
+            InTime = inTime,
+            PatientId = dto.PatientId,
+            TherpistId = (int)dto.TherpistId,
+        };
+
+        _db.Appointments.Add(newAppoinment);
         _db.SaveChanges();
         return true;
     }
